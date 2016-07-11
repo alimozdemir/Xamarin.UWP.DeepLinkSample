@@ -80,6 +80,45 @@ namespace Xamarin.UWP.DeepLinkSample.UWP
             Window.Current.Activate();
         }
 
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            bool already = false;
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (rootFrame == null)
+            {
+                already = true;
+                // Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = new Frame();
+
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                Xamarin.Forms.Forms.Init(args);
+                //XApp = new BeesHelper.App();
+                
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+            }
+
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                var protocolArgs = args as ProtocolActivatedEventArgs;
+
+                if (already)
+                {
+
+                    rootFrame.Navigate(typeof(MainPage), protocolArgs.Uri);
+                }
+
+                //XApp.DeepLinkActivation(protocolArgs.Uri.ToString());
+            }
+
+            // Ensure the current window is active
+            Window.Current.Activate();
+        }
+
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>

@@ -23,6 +23,11 @@ namespace Xamarin.UWP.DeepLinkSample.UWP
     sealed partial class App : Application
     {
         /// <summary>
+        /// Default Xamarin Application
+        /// </summary>
+        public Xamarin.UWP.DeepLinkSample.App XApp;
+
+        /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
@@ -59,6 +64,7 @@ namespace Xamarin.UWP.DeepLinkSample.UWP
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e);
+                XApp = new DeepLinkSample.App();
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -83,20 +89,21 @@ namespace Xamarin.UWP.DeepLinkSample.UWP
         protected override void OnActivated(IActivatedEventArgs args)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-            bool already = false;
+            bool needNavigation = false;
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
             {
-                already = true;
+                needNavigation = true;
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
+                //Initalize Xamarin
                 Xamarin.Forms.Forms.Init(args);
-                //XApp = new BeesHelper.App();
-                
+                XApp = new DeepLinkSample.App();
+
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
@@ -105,13 +112,13 @@ namespace Xamarin.UWP.DeepLinkSample.UWP
             {
                 var protocolArgs = args as ProtocolActivatedEventArgs;
 
-                if (already)
+                if (needNavigation)
                 {
-
                     rootFrame.Navigate(typeof(MainPage), protocolArgs.Uri);
                 }
 
-                //XApp.DeepLinkActivation(protocolArgs.Uri.ToString());
+                //Trigger the event
+                XApp.DeepLinkRequest(protocolArgs.Uri);
             }
 
             // Ensure the current window is active

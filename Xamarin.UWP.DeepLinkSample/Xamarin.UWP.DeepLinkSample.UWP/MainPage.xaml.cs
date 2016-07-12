@@ -15,13 +15,16 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Xamarin.UWP.DeepLinkSample.UWP
 {
+    //Short way to call a class
+    using AppType = Xamarin.UWP.DeepLinkSample.UWP.App;
+
     public sealed partial class MainPage
     {
         public MainPage()
         {
             this.InitializeComponent();
-
-            LoadApplication(new Xamarin.UWP.DeepLinkSample.App());
+            AppType app = App.Current as AppType; 
+            LoadApplication(app.XApp);
         }
     }
 }

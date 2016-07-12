@@ -9,22 +9,34 @@ namespace Xamarin.UWP.DeepLinkSample
 {
     public class App : Application
     {
+        public delegate void DeepLinkRequestDelegate(Uri parameter);
+        public event DeepLinkRequestDelegate OnDeepLinkRequest;
+
         public App()
         {
             // The root page of your application
-            MainPage = new ContentPage
+            MainPage = new NavigationPage(new Page1());
+            OnDeepLinkRequest += App_OnDeepLinkRequest;
+        }
+
+        //To handle navigation
+        private void App_OnDeepLinkRequest(Uri parameter)
+        {
+            var page = MainPage as NavigationPage;
+            if (parameter.Query.Equals("?Page1"))
             {
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    Children = {
-                        new Label {
-                            HorizontalTextAlignment = TextAlignment.Center,
-                            Text = "Welcome to Xamarin Forms!"
-                        }
-                    }
-                }
-            };
+                page.PushAsync(new Page1());
+            }
+            else if (parameter.Query.Equals("?Page2"))
+            {
+                page.PushAsync(new Page2());
+            }
+        }
+        
+        //To trigger event
+        public void DeepLinkRequest(Uri uri)
+        {
+            OnDeepLinkRequest(uri);
         }
 
         protected override void OnStart()
